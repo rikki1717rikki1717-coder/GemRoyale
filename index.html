@@ -3,20 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BRAWL CLONE - Gem Battle</title>
+    <title>Gem Royale - ジェム・ロワイヤル</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Rubik:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+P+One&family=Noto+Sans+JP:wght@500;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --primary: #FFC107;
-            --secondary: #FF9800;
             --blue-team: #007BFF;
             --red-team: #FF3B30;
-            --bg-color: #1a1a2e;
-            --ui-font: 'Rubik', sans-serif;
-            --header-font: 'Lilita One', cursive;
+            --header-font: 'Mochiy Pop P One', sans-serif;
+            --body-font: 'Noto Sans JP', sans-serif;
         }
 
         * {
@@ -28,10 +27,9 @@
 
         body {
             margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
+            background-color: #121212;
             overflow: hidden;
-            font-family: var(--ui-font);
+            font-family: var(--body-font);
             color: white;
             height: 100vh;
             width: 100vw;
@@ -42,8 +40,7 @@
             position: relative;
             width: 100%;
             height: 100%;
-            background: #2b2b2b; /* Map Floor Color */
-            overflow: hidden;
+            background: #1a1a1a;
         }
 
         canvas {
@@ -52,11 +49,12 @@
             height: 100%;
         }
 
-        /* --- MENUS --- */
+        /* --- OVERLAYS --- */
         .overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -73,166 +71,151 @@
 
         h1 {
             font-family: var(--header-font);
-            font-size: 4rem;
+            font-size: 3.5rem;
             color: var(--primary);
-            text-shadow: 4px 4px 0px #000, -2px -2px 0 #fff;
-            margin-bottom: 20px;
+            text-shadow: 4px 4px 0 #000;
+            margin-bottom: 10px;
             letter-spacing: 2px;
-            transform: rotate(-3deg);
+            text-align: center;
+            line-height: 1.2;
         }
 
+        /* キャラ選択カード */
         .card-container {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .char-card {
-            background: linear-gradient(145deg, #2a2a40, #1f1f30);
-            border: 4px solid #444;
-            border-radius: 20px;
-            padding: 20px;
-            width: 160px;
+            background: #2c2c2c;
+            border: 3px solid #555;
+            border-radius: 15px;
+            padding: 15px;
+            width: 140px;
             text-align: center;
             cursor: pointer;
-            transition: transform 0.2s, border-color 0.2s;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            transition: 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        /* テクスチャ風パターン */
+        .char-card::before {
+            content: ''; position: absolute; top:0; left:0; width:100%; height:100%;
+            background-image: radial-gradient(#ffffff 1px, transparent 1px);
+            background-size: 10px 10px;
+            opacity: 0.05;
         }
 
         .char-card:hover, .char-card.selected {
-            transform: translateY(-10px) scale(1.05);
+            transform: translateY(-5px);
             border-color: var(--primary);
-            background: linear-gradient(145deg, #3a3a55, #2f2f45);
+            background: #3e3e3e;
+            box-shadow: 0 0 15px var(--primary);
         }
 
-        .char-icon {
-            font-size: 3rem;
-            margin-bottom: 10px;
-        }
-
-        .char-name {
-            font-family: var(--header-font);
-            font-size: 1.5rem;
-            margin: 0;
-            color: white;
-        }
-
-        .char-role {
-            font-size: 0.8rem;
-            color: #aaa;
-            margin-bottom: 10px;
-        }
-
-        .stat-bar {
-            background: #444;
-            height: 8px;
-            border-radius: 4px;
-            margin: 5px 0;
-            overflow: hidden;
-            position: relative;
-        }
-        .stat-fill { height: 100%; background: var(--secondary); }
+        .char-icon { font-size: 2.5rem; margin-bottom: 5px; }
+        .char-name { font-family: var(--header-font); font-size: 1.2rem; color: #fff; }
+        .char-role { font-size: 0.75rem; color: #aaa; margin-bottom: 8px; }
 
         .btn-start {
             font-family: var(--header-font);
-            font-size: 2rem;
-            background: linear-gradient(to bottom, #4CAF50, #2E7D32);
-            color: white;
+            font-size: 1.8rem;
+            background: linear-gradient(to bottom, #FFC107, #FF8F00);
+            color: #000;
             border: none;
-            padding: 15px 60px;
+            padding: 12px 50px;
             border-radius: 50px;
-            border-bottom: 6px solid #1B5E20;
+            border-bottom: 6px solid #E65100;
             cursor: pointer;
             box-shadow: 0 10px 20px rgba(0,0,0,0.4);
             transition: transform 0.1s;
         }
-        .btn-start:active {
-            transform: translateY(4px);
-            border-bottom-width: 2px;
-        }
+        .btn-start:active { transform: translateY(4px); border-bottom-width: 2px; }
 
         /* --- HUD --- */
-        #hud {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 10;
-        }
-
         .score-board {
             position: absolute;
-            top: 20px; left: 50%;
+            top: 15px; left: 50%;
             transform: translateX(-50%);
             display: flex;
             gap: 20px;
             font-family: var(--header-font);
             font-size: 2rem;
             text-shadow: 2px 2px 0 #000;
+            background: rgba(0,0,0,0.5);
+            padding: 5px 20px;
+            border-radius: 30px;
+            border: 2px solid rgba(255,255,255,0.2);
+            z-index: 20;
         }
+        .score-blue { color: #4fc3f7; }
+        .score-red { color: #ff8a80; }
 
-        .score-blue { color: #4fc3f7; display: flex; align-items: center; gap: 5px; }
-        .score-red { color: #ff8a80; display: flex; align-items: center; gap: 5px; }
-        .gem-icon { color: #d500f9; filter: drop-shadow(0 0 5px #d500f9); }
-
-        /* Joysticks */
-        .joystick-zone {
+        /* 復活タイマー */
+        #respawn-overlay {
             position: absolute;
-            bottom: 40px;
-            width: 150px;
-            height: 150px;
-            pointer-events: auto;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none; /* 下の操作を邪魔しない（操作不能にするならauto） */
+            z-index: 50;
         }
-        #stick-left { left: 40px; }
-        #stick-right { right: 40px; }
+        .respawn-text {
+            font-family: var(--header-font);
+            font-size: 4rem;
+            color: #ff5252;
+            text-shadow: 3px 3px 0 #000;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
+        /* リザルト画面 */
+        .stats-table {
+            width: 90%;
+            max-width: 600px;
+            margin: 20px 0;
+            border-collapse: collapse;
+            font-size: 1rem;
+            background: #222;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .stats-table th, .stats-table td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #444;
+        }
+        .stats-table th { background: #333; color: #aaa; }
+        .row-blue { color: #4fc3f7; }
+        .row-red { color: #ff8a80; }
+        .me-indicator { border: 1px solid #FFC107; padding: 2px 5px; border-radius: 4px; font-size: 0.8rem; color: #FFC107; margin-left:5px;}
+
+        /* JoySticks */
+        .joystick-zone { position: absolute; bottom: 30px; width: 140px; height: 140px; pointer-events: auto; z-index: 30; }
+        #stick-left { left: 30px; }
+        #stick-right { right: 30px; }
         .joystick-base {
             width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.2);
             border-radius: 50%;
             position: relative;
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            border: 2px dashed rgba(255, 255, 255, 0.3);
         }
-
         .joystick-handle {
-            width: 60px; height: 60px;
-            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), rgba(200,200,200,0.2));
-            background-color: rgba(255, 255, 255, 0.2);
+            width: 50px; height: 50px;
+            background: rgba(255,255,255,0.8);
             border-radius: 50%;
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            border: 2px solid rgba(255,255,255,0.5);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
-        #stick-right .joystick-handle {
-            background-color: rgba(255, 59, 48, 0.4); /* Red tint for attack */
-            border-color: rgba(255, 59, 48, 0.8);
-        }
-
-        /* --- GAME OVER --- */
-        #result-screen h2 {
-            font-family: var(--header-font);
-            font-size: 5rem;
-            margin: 0;
-            text-shadow: 0 5px 15px rgba(0,0,0,0.5);
-        }
-        .win { color: #00E676; text-shadow: 4px 4px 0 #00600f; }
-        .lose { color: #FF1744; text-shadow: 4px 4px 0 #8b0000; }
-
-        /* Floating Text Animation */
-        .floating-text {
-            position: absolute;
-            font-family: var(--header-font);
-            color: white;
-            font-size: 1.2rem;
-            pointer-events: none;
-            animation: floatUp 0.8s ease-out forwards;
-            -webkit-text-stroke: 1px black;
-        }
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-50px) scale(1.5); }
-        }
+        #stick-right .joystick-handle { background: rgba(255, 82, 82, 0.8); }
 
     </style>
 </head>
@@ -243,11 +226,15 @@
 
         <div id="hud" class="hidden">
             <div class="score-board">
-                <div class="score-blue"><span id="score-blue-val">0</span> <span class="gem-icon">💎</span></div>
-                <div style="color:white; font-size:1.5rem; margin-top:5px;">vs</div>
-                <div class="score-red"><span class="gem-icon">💎</span> <span id="score-red-val">0</span></div>
+                <div class="score-blue"><span id="score-blue-val">0</span> 💎</div>
+                <div style="color:white; font-size:1.5rem;">:</div>
+                <div class="score-red">💎 <span id="score-red-val">0</span></div>
             </div>
             
+            <div id="respawn-overlay" class="hidden">
+                <div class="respawn-text">復活まで <span id="respawn-timer">3</span></div>
+            </div>
+
             <div id="stick-left" class="joystick-zone">
                 <div class="joystick-base"><div class="joystick-handle"></div></div>
             </div>
@@ -257,61 +244,183 @@
         </div>
 
         <div id="main-menu" class="overlay">
-            <h1>BRAWL CLONE</h1>
-            <p style="color: #ccc; margin-bottom: 20px;">キャラクターを選択してください</p>
+            <h1>GEM ROYALE<br><span style="font-size:1.5rem; color:white;">ジェム・ロワイヤル</span></h1>
             
             <div class="card-container">
                 <div class="char-card selected" onclick="selectChar('fighter', this)">
                     <div class="char-icon">🤠</div>
-                    <h3 class="char-name">ファイター</h3>
-                    <div class="char-role">中距離 / 散弾</div>
-                    <div class="stat-bar"><div class="stat-fill" style="width: 70%"></div></div> <div class="stat-bar"><div class="stat-fill" style="width: 80%; background:#ff5252"></div></div> </div>
+                    <div class="char-name">ファイター</div>
+                    <div class="char-role">近距離 / バランス</div>
+                </div>
                 <div class="char-card" onclick="selectChar('sniper', this)">
                     <div class="char-icon">👮</div>
-                    <h3 class="char-name">スナイパー</h3>
-                    <div class="char-role">遠距離 / 連射</div>
-                    <div class="stat-bar"><div class="stat-fill" style="width: 50%"></div></div>
-                    <div class="stat-bar"><div class="stat-fill" style="width: 95%; background:#ff5252"></div></div>
+                    <div class="char-name">スナイパー</div>
+                    <div class="char-role">遠距離 / 高火力</div>
                 </div>
                 <div class="char-card" onclick="selectChar('tank', this)">
                     <div class="char-icon">🤼</div>
-                    <h3 class="char-name">タンク</h3>
-                    <div class="char-role">近距離 / 高耐久</div>
-                    <div class="stat-bar"><div class="stat-fill" style="width: 100%"></div></div>
-                    <div class="stat-bar"><div class="stat-fill" style="width: 60%; background:#ff5252"></div></div>
+                    <div class="char-name">タンク</div>
+                    <div class="char-role">超近接 / 高耐久</div>
                 </div>
             </div>
 
-            <button class="btn-start" onclick="startGame()">BATTLE!</button>
+            <button class="btn-start" onclick="startGame()">BATTLE START</button>
+            <p style="margin-top:15px; color:#888; font-size:0.8rem;">※音が出ます</p>
         </div>
 
         <div id="result-screen" class="overlay hidden">
-            <h2 id="result-title">VICTORY!</h2>
-            <p id="result-desc" style="font-size: 1.5rem; color: #fff;">Blue Team Wins</p>
-            <button class="btn-start" style="margin-top: 30px;" onclick="resetGame()">PLAY AGAIN</button>
+            <h2 id="result-title" style="font-family: var(--header-font); font-size: 4rem; margin: 0;">VICTORY!</h2>
+            
+            <table class="stats-table">
+                <thead>
+                    <tr>
+                        <th>名前</th>
+                        <th>キル</th>
+                        <th>デス</th>
+                        <th>ジェム</th>
+                    </tr>
+                </thead>
+                <tbody id="stats-body">
+                    </tbody>
+            </table>
+
+            <button class="btn-start" onclick="resetGame()">もう一度プレイ</button>
         </div>
     </div>
 
 <script>
 /**
- * Game Configuration & Constants
+ * ----------------------------------------------------
+ * AUDIO MANAGER (Web Audio API - No external files)
+ * ----------------------------------------------------
+ */
+class AudioManager {
+    constructor() {
+        this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        this.bgmOsc = null;
+        this.bgmGain = null;
+        this.isPlaying = false;
+    }
+
+    resume() {
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+    }
+
+    playTone(freq, type, duration, vol = 0.1) {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+        gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + duration);
+    }
+
+    playShoot(type) {
+        // ピュン！
+        if (type === 'sniper') this.playTone(600, 'square', 0.1, 0.05);
+        else if (type === 'tank') this.playTone(150, 'sawtooth', 0.2, 0.1);
+        else this.playTone(400, 'triangle', 0.1, 0.05);
+    }
+
+    playHit() {
+        // ボスッ
+        this.playTone(100, 'sawtooth', 0.1, 0.05);
+    }
+
+    playGem() {
+        // キラッ
+        this.playTone(1200, 'sine', 0.2, 0.1);
+        setTimeout(() => this.playTone(1800, 'sine', 0.3, 0.1), 100);
+    }
+
+    playDie() {
+        // ビョーン
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.frequency.setValueAtTime(300, this.ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(50, this.ctx.currentTime + 0.5);
+        gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.5);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.5);
+    }
+
+    startBGM() {
+        if (this.isPlaying) return;
+        this.isPlaying = true;
+        // Simple Drum Loop
+        this.beatInterval = setInterval(() => {
+            if(!gameActive) return;
+            // Kick
+            this.playTone(80, 'sine', 0.1, 0.3);
+            // Hat
+            setTimeout(() => this.playTone(1200, 'square', 0.05, 0.02), 250);
+            setTimeout(() => this.playTone(1200, 'square', 0.05, 0.02), 750);
+            // Snare
+            setTimeout(() => this.playTone(200, 'sawtooth', 0.1, 0.1), 500);
+        }, 1000);
+    }
+}
+
+const Audio = new AudioManager();
+
+/**
+ * ----------------------------------------------------
+ * GRAPHICS GENERATOR (Procedural Textures)
+ * ----------------------------------------------------
+ */
+function createPattern(color1, color2, size=32) {
+    const pCanvas = document.createElement('canvas');
+    pCanvas.width = size;
+    pCanvas.height = size;
+    const pCtx = pCanvas.getContext('2d');
+    
+    // Base
+    pCtx.fillStyle = color1;
+    pCtx.fillRect(0,0,size,size);
+    
+    // Noise/Texture
+    pCtx.fillStyle = color2;
+    pCtx.globalAlpha = 0.1;
+    for(let i=0; i<10; i++) {
+        pCtx.fillRect(Math.random()*size, Math.random()*size, 4, 4);
+    }
+    // Checker hint
+    pCtx.fillStyle = 'rgba(0,0,0,0.05)';
+    pCtx.fillRect(0,0,size/2,size/2);
+    pCtx.fillRect(size/2,size/2,size/2,size/2);
+
+    return CTX.createPattern(pCanvas, 'repeat');
+}
+
+
+/**
+ * ----------------------------------------------------
+ * GAME ENGINE
+ * ----------------------------------------------------
  */
 const CANVAS = document.getElementById('gameCanvas');
 const CTX = CANVAS.getContext('2d');
+
 const CONFIG = {
-    mapWidth: 2000,
-    mapHeight: 2000,
-    tileSize: 100,
-    gemSpawnRate: 300, // Frames
+    mapWidth: 1800,
+    mapHeight: 1800,
+    tileSize: 150,
+    gemSpawnRate: 200,
+    cameraScale: 0.65, // 戦況を見やすくするためにズームアウト
 };
 
 let gameActive = false;
 let camera = { x: 0, y: 0 };
 let playerType = 'fighter';
+let floorPattern;
 
-/**
- * Classes
- */
 class Vector {
     constructor(x, y) { this.x = x; this.y = y; }
     add(v) { return new Vector(this.x + v.x, this.y + v.y); }
@@ -325,80 +434,66 @@ class Vector {
 }
 
 class Entity {
-    constructor(x, y, radius, color) {
+    constructor(x, y, radius) {
         this.pos = new Vector(x, y);
         this.radius = radius;
-        this.color = color;
         this.dead = false;
     }
 }
 
 class Brawler extends Entity {
-    constructor(x, y, team, type, isBot = false) {
-        super(x, y, 35, team === 'blue' ? '#007BFF' : '#FF3B30');
+    constructor(x, y, team, type, isBot = false, name) {
+        super(x, y, 40);
         this.team = team;
         this.type = type;
         this.isBot = isBot;
+        this.name = name;
         this.velocity = new Vector(0, 0);
-        this.angle = 0;
-        this.gems = 0;
         this.respawnTimer = 0;
+        
+        // Stats for result
+        this.stats = { kills: 0, deaths: 0, gems: 0 };
 
-        // Stats based on type
+        // Configuration
         if (type === 'tank') {
-            this.maxHp = 6000;
-            this.speed = 4;
-            this.range = 150;
-            this.reloadTime = 40;
-            this.damage = 1000;
-            this.projectileCount = 1;
-            this.spread = 0;
+            this.maxHp = 6000; this.speed = 5; this.range = 180;
+            this.damage = 1000; this.reloadTime = 40;
+            this.color = team==='blue' ? '#2979FF' : '#FF1744';
             this.isMelee = true;
         } else if (type === 'sniper') {
-            this.maxHp = 2800;
-            this.speed = 5;
-            this.range = 800;
-            this.reloadTime = 30;
-            this.damage = 600;
-            this.projectileCount = 1;
-            this.spread = 0.05;
-            this.projectileSpeed = 20;
+            this.maxHp = 2800; this.speed = 6; this.range = 900;
+            this.damage = 900; this.reloadTime = 35;
+            this.color = team==='blue' ? '#40C4FF' : '#FF5252';
             this.isMelee = false;
-        } else { // fighter (Shelly)
-            this.maxHp = 3800;
-            this.speed = 4.5;
-            this.range = 400;
-            this.reloadTime = 50;
-            this.damage = 400; // per bullet
-            this.projectileCount = 5;
-            this.spread = 0.4;
-            this.projectileSpeed = 15;
+        } else {
+            this.maxHp = 4200; this.speed = 5.5; this.range = 450;
+            this.damage = 400; this.reloadTime = 45;
+            this.color = team==='blue' ? '#00B0FF' : '#D50000';
             this.isMelee = false;
+            this.projectileCount = 3; // Shotgun
         }
         
         this.hp = this.maxHp;
+        this.currentGemCount = 0;
         this.cooldown = 0;
-        
-        // Bot AI
         this.target = null;
-        this.state = 'idle'; // idle, chase, retreat, collect
     }
 
     update() {
         if (this.dead) {
             this.respawnTimer--;
+            if (this === player) {
+                document.getElementById('respawn-timer').innerText = Math.ceil(this.respawnTimer / 60);
+            }
             if (this.respawnTimer <= 0) this.respawn();
             return;
         }
 
-        // Friction
-        this.velocity = this.velocity.mult(0.85);
+        this.velocity = this.velocity.mult(0.85); // Friction
         this.pos = this.pos.add(this.velocity);
-        
-        // Cooldown
         if (this.cooldown > 0) this.cooldown--;
 
-        // Map Boundaries
+        // Map Bounds
         this.pos.x = Math.max(this.radius, Math.min(CONFIG.mapWidth - this.radius, this.pos.x));
         this.pos.y = Math.max(this.radius, Math.min(CONFIG.mapHeight - this.radius, this.pos.y));
 
@@ -407,83 +502,91 @@ class Brawler extends Entity {
 
     shoot(aimVector) {
         if (this.dead || this.cooldown > 0) return;
-
         this.cooldown = this.reloadTime;
-        
+        Audio.playShoot(this.type);
+
         if (this.isMelee) {
-            // Melee Attack (Hitscan area)
-            // Visual effect
-            particles.push(new Particle(this.pos.x + aimVector.x * 40, this.pos.y + aimVector.y * 40, 60, '#fff', 10));
-            
+            // Melee
+            particles.push(new Particle(this.pos.x + aimVector.x*50, this.pos.y + aimVector.y*50, 80, '#fff', 10));
             brawlers.forEach(b => {
                 if (b.team !== this.team && !b.dead) {
-                    let dist = b.pos.sub(this.pos).mag();
-                    if (dist < this.range) {
-                        b.takeDamage(this.damage);
+                    if (b.pos.sub(this.pos).mag() < this.range) {
+                        b.takeDamage(this.damage, this);
                     }
                 }
             });
         } else {
-            // Projectile Attack
+            // Ranged
+            const count = this.type === 'fighter' ? 3 : 1;
+            const spread = this.type === 'fighter' ? 0.3 : 0;
+            const speed = 25;
+            
             let baseAngle = Math.atan2(aimVector.y, aimVector.x);
-            let startAngle = baseAngle - this.spread / 2;
-            let step = this.projectileCount > 1 ? this.spread / (this.projectileCount - 1) : 0;
-
-            for (let i = 0; i < this.projectileCount; i++) {
-                let angle = startAngle + (step * i);
-                let vx = Math.cos(angle) * this.projectileSpeed;
-                let vy = Math.sin(angle) * this.projectileSpeed;
-                projectiles.push(new Projectile(
-                    this.pos.x, this.pos.y, 
-                    new Vector(vx, vy), 
-                    this.damage, 
-                    this.team, 
-                    this.range
-                ));
+            let startAngle = baseAngle - spread/2;
+            
+            for(let i=0; i<count; i++) {
+                let angle = startAngle + (count > 1 ? (spread/(count-1))*i : 0);
+                let vel = new Vector(Math.cos(angle)*speed, Math.sin(angle)*speed);
+                projectiles.push(new Projectile(this.pos.x, this.pos.y, vel, this.damage, this.team, this.range, this));
             }
         }
     }
 
-    takeDamage(amount) {
+    takeDamage(amount, attacker) {
         if (this.dead) return;
         this.hp -= amount;
-        spawnFloatingText(Math.floor(amount), this.pos.x, this.pos.y - 40, '#ffcc00');
+        spawnFloatingText(Math.floor(amount), this.pos.x, this.pos.y - 40, '#fff');
+        Audio.playHit();
         
         if (this.hp <= 0) {
-            this.die();
+            this.die(attacker);
         }
     }
 
-    die() {
+    die(attacker) {
         this.dead = true;
-        this.respawnTimer = 180; // 3 seconds
+        this.respawnTimer = 180; // 3 sec (60fps)
+        this.stats.deaths++;
+        if (attacker) attacker.stats.kills++;
+        
+        Audio.playDie();
         
         // Drop gems
-        let gemsToDrop = Math.floor(this.gems / 2) + 1; // Drop half + 1 base
-        this.gems = 0;
+        let gemsToDrop = Math.floor(this.currentGemCount / 2) + 2;
+        this.currentGemCount = 0;
         for(let i=0; i<gemsToDrop; i++) {
-            gems.push(new Gem(this.pos.x + (Math.random()*40-20), this.pos.y + (Math.random()*40-20)));
+            gems.push(new Gem(this.pos.x + (Math.random()*60-30), this.pos.y + (Math.random()*60-30)));
         }
         
-        updateScore();
-        spawnFloatingText("ELIMINATED!", this.pos.x, this.pos.y, 'red');
+        spawnFloatingText("DOWN!", this.pos.x, this.pos.y, 'red');
+
+        // Show UI if player
+        if (this === player) {
+            document.getElementById('respawn-overlay').classList.remove('hidden');
+        }
     }
 
     respawn() {
         this.dead = false;
         this.hp = this.maxHp;
-        // Spawn at base
-        if (this.team === 'blue') {
-            this.pos = new Vector(100 + Math.random()*100, CONFIG.mapHeight/2 + Math.random()*200 - 100);
-        } else {
-            this.pos = new Vector(CONFIG.mapWidth - 100 - Math.random()*100, CONFIG.mapHeight/2 + Math.random()*200 - 100);
+        // Base Spawn
+        this.pos = this.team === 'blue' 
+            ? new Vector(150, CONFIG.mapHeight/2 + Math.random()*200-100)
+            : new Vector(CONFIG.mapWidth-150, CONFIG.mapHeight/2 + Math.random()*200-100);
+        
+        spawnFloatingText("REVIVE!", this.pos.x, this.pos.y, '#00E676');
+        
+        if (this === player) {
+            document.getElementById('respawn-overlay').classList.add('hidden');
         }
     }
 
     updateAI() {
-        // Simple AI Logic
-        // 1. Find nearest Gem
-        // 2. Or Find nearest Enemy
+        // Simple Logic: Find nearest gem or enemy
+        let target = null;
+        let mode = 'hunt'; // hunt, flee, collect
+
+        // Look for gems first
         let nearestGem = null;
         let minGemDist = 9999;
         gems.forEach(g => {
@@ -491,76 +594,68 @@ class Brawler extends Entity {
             if (d < minGemDist) { minGemDist = d; nearestGem = g; }
         });
 
-        let nearestEnemy = null;
-        let minEnemyDist = 9999;
-        brawlers.forEach(b => {
-            if (b.team !== this.team && !b.dead) {
-                let d = this.pos.sub(b.pos).mag();
-                if (d < minEnemyDist) { minEnemyDist = d; nearestEnemy = b; }
-            }
-        });
-
-        let moveDir = new Vector(0,0);
-        let shootDir = null;
-
-        // Decision Tree
-        if (nearestEnemy && minEnemyDist < this.range * 0.8) {
-            // Fight mode
-            shootDir = nearestEnemy.pos.sub(this.pos).normalize();
-            // Maintain distance if sniper, close in if tank
-            if (this.type === 'sniper' && minEnemyDist < 300) {
-                moveDir = this.pos.sub(nearestEnemy.pos).normalize(); // Retreat
-            } else {
-                moveDir = shootDir;
-            }
-        } else if (nearestGem && this.gems < 10) {
-            // Collect mode
-            moveDir = nearestGem.pos.sub(this.pos).normalize();
-        } else if (nearestEnemy) {
-            // Hunt mode
-            moveDir = nearestEnemy.pos.sub(this.pos).normalize();
+        if (nearestGem && this.currentGemCount < 8 && minGemDist < 600) {
+            target = nearestGem.pos;
+            mode = 'collect';
         } else {
-            // Go to center
-            moveDir = new Vector(CONFIG.mapWidth/2, CONFIG.mapHeight/2).sub(this.pos).normalize();
+            // Find enemy
+            let nearestEnemy = null;
+            let minEnemyDist = 9999;
+            brawlers.forEach(b => {
+                if (b.team !== this.team && !b.dead) {
+                    let d = this.pos.sub(b.pos).mag();
+                    if (d < minEnemyDist) { minEnemyDist = d; nearestEnemy = b; }
+                }
+            });
+            if (nearestEnemy) {
+                target = nearestEnemy.pos;
+                // If I have many gems or low HP, flee
+                if (this.currentGemCount > 8 || this.hp < this.maxHp * 0.3) mode = 'flee';
+            }
         }
 
-        // Apply movement
-        this.velocity = this.velocity.add(moveDir.mult(0.5)); // Acceleration
-        // Cap speed
-        if (this.velocity.mag() > this.speed) {
-            this.velocity = this.velocity.normalize().mult(this.speed);
-        }
+        if (target) {
+            let dir = target.sub(this.pos).normalize();
+            if (mode === 'flee') dir = dir.mult(-1);
+            
+            // Movement
+            this.velocity = this.velocity.add(dir.mult(0.6));
+            if (this.velocity.mag() > this.speed) this.velocity = this.velocity.normalize().mult(this.speed);
 
-        // Shoot randomly if has target
-        if (shootDir && Math.random() < 0.05) {
-            this.shoot(shootDir);
+            // Shooting
+            if (mode !== 'collect' && mode !== 'flee' && Math.random() < 0.05) {
+                 this.shoot(target.sub(this.pos));
+            }
+        } else {
+            // Go center
+            let center = new Vector(CONFIG.mapWidth/2, CONFIG.mapHeight/2);
+            this.velocity = this.velocity.add(center.sub(this.pos).normalize().mult(0.3));
         }
     }
 }
 
 class Projectile extends Entity {
-    constructor(x, y, vel, damage, team, range) {
-        super(x, y, 8, '#fff');
+    constructor(x, y, vel, damage, team, range, owner) {
+        super(x, y, 12);
         this.velocity = vel;
         this.damage = damage;
         this.team = team;
-        this.distanceTravelled = 0;
         this.maxDist = range;
+        this.dist = 0;
+        this.owner = owner;
     }
-
     update() {
         this.pos = this.pos.add(this.velocity);
-        this.distanceTravelled += this.velocity.mag();
-        if (this.distanceTravelled >= this.maxDist) this.dead = true;
+        this.dist += this.velocity.mag();
+        if (this.dist >= this.maxDist) this.dead = true;
 
-        // Collision Check
         brawlers.forEach(b => {
             if (b.team !== this.team && !b.dead) {
                 if (b.pos.sub(this.pos).mag() < b.radius + this.radius) {
-                    b.takeDamage(this.damage);
+                    b.takeDamage(this.damage, this.owner);
                     this.dead = true;
-                    // Hit particles
-                    for(let i=0; i<3; i++) particles.push(new Particle(this.pos.x, this.pos.y, 5, this.team === 'blue' ? '#007BFF' : '#FF3B30', 15));
+                    // Spark effect
+                    for(let i=0;i<4;i++) particles.push(new Particle(this.pos.x, this.pos.y, 6, this.team==='blue'?'#80D8FF':'#FF8A80', 10));
                 }
             }
         });
@@ -569,174 +664,61 @@ class Projectile extends Entity {
 
 class Gem extends Entity {
     constructor(x, y) {
-        super(x, y, 10, '#d500f9');
-        this.floatOffset = Math.random() * Math.PI * 2;
+        super(x, y, 15);
+        this.floatY = 0;
     }
-    
     update() {
-        // Collect
+        this.floatY = Math.sin(Date.now()/300)*5;
         brawlers.forEach(b => {
             if (!b.dead && b.pos.sub(this.pos).mag() < b.radius + this.radius) {
                 this.dead = true;
-                b.gems++;
-                updateScore();
-                spawnFloatingText("+1", b.pos.x, b.pos.y - 50, '#d500f9');
+                b.currentGemCount++;
+                b.stats.gems++;
+                Audio.playGem();
+                spawnFloatingText("+1", b.pos.x, b.pos.y-50, '#D500F9');
             }
         });
     }
-
-    draw(ctx) {
-        let bob = Math.sin(Date.now() / 200 + this.floatOffset) * 5;
-        ctx.fillStyle = this.color;
-        ctx.shadowColor = this.color;
-        ctx.shadowBlur = 10;
-        ctx.beginPath();
-        ctx.moveTo(this.pos.x, this.pos.y - 10 + bob);
-        ctx.lineTo(this.pos.x + 10, this.pos.y + bob);
-        ctx.lineTo(this.pos.x, this.pos.y + 10 + bob);
-        ctx.lineTo(this.pos.x - 10, this.pos.y + bob);
-        ctx.fill();
-        ctx.shadowBlur = 0;
+    draw() {
+        CTX.fillStyle = '#D500F9';
+        CTX.beginPath();
+        CTX.moveTo(this.pos.x, this.pos.y - 12 + this.floatY);
+        CTX.lineTo(this.pos.x+12, this.pos.y + this.floatY);
+        CTX.lineTo(this.pos.x, this.pos.y + 12 + this.floatY);
+        CTX.lineTo(this.pos.x-12, this.pos.y + this.floatY);
+        CTX.fill();
+        // Shine
+        CTX.fillStyle = '#fff';
+        CTX.beginPath();
+        CTX.arc(this.pos.x-4, this.pos.y-4+this.floatY, 3, 0, Math.PI*2);
+        CTX.fill();
     }
 }
 
 class Particle extends Entity {
-    constructor(x, y, radius, color, life) {
-        super(x, y, radius, color);
+    constructor(x, y, size, color, life) {
+        super(x, y, size);
+        this.color = color;
         this.life = life;
         this.maxLife = life;
-        this.velocity = new Vector((Math.random()-0.5)*5, (Math.random()-0.5)*5);
+        this.velocity = new Vector((Math.random()-0.5)*10, (Math.random()-0.5)*10);
     }
     update() {
         this.pos = this.pos.add(this.velocity);
         this.life--;
-        if (this.life <= 0) this.dead = true;
-    }
-    draw(ctx) {
-        ctx.globalAlpha = this.life / this.maxLife;
-        ctx.fillStyle = this.color;
-        ctx.beginPath();
-        ctx.arc(this.pos.x, this.pos.y, this.radius, 0, Math.PI*2);
-        ctx.fill();
-        ctx.globalAlpha = 1;
+        if (this.life<=0) this.dead=true;
     }
 }
 
-/**
- * Globals
- */
-let brawlers = [];
-let projectiles = [];
-let gems = [];
-let particles = [];
-let gemSpawnTimer = 0;
+let brawlers = [], projectiles = [], gems = [], particles = [];
 let player;
+const inputs = { move: new Vector(0,0), aim: new Vector(0,0) };
 
-/**
- * Input Handling (Virtual Joysticks)
- */
-const inputs = {
-    move: new Vector(0,0),
-    aim: new Vector(0,0),
-    isShooting: false
-};
-
-function setupJoystick(elementId, type) {
-    const zone = document.getElementById(elementId);
-    const handle = zone.querySelector('.joystick-handle');
-    let touchId = null;
-    let origin = {x:0, y:0};
-
-    zone.addEventListener('touchstart', e => {
-        e.preventDefault();
-        const touch = e.changedTouches[0];
-        touchId = touch.identifier;
-        const rect = zone.getBoundingClientRect();
-        origin = { x: rect.left + rect.width/2, y: rect.top + rect.height/2 };
-        updateStick(touch.clientX, touch.clientY);
-    }, {passive: false});
-
-    zone.addEventListener('touchmove', e => {
-        e.preventDefault();
-        for (let i=0; i<e.changedTouches.length; i++) {
-            if (e.changedTouches[i].identifier === touchId) {
-                updateStick(e.changedTouches[i].clientX, e.changedTouches[i].clientY);
-            }
-        }
-    }, {passive: false});
-
-    const endTouch = (e) => {
-        e.preventDefault();
-        for (let i=0; i<e.changedTouches.length; i++) {
-            if (e.changedTouches[i].identifier === touchId) {
-                touchId = null;
-                handle.style.transform = `translate(-50%, -50%)`;
-                if (type === 'move') inputs.move = new Vector(0,0);
-                if (type === 'aim') {
-                    // Release to shoot
-                    if (inputs.aim.mag() > 0.3) {
-                        player.shoot(inputs.aim);
-                    }
-                    inputs.aim = new Vector(0,0);
-                    inputs.isShooting = false;
-                    handle.style.backgroundColor = '';
-                }
-            }
-        }
-    };
-
-    zone.addEventListener('touchend', endTouch);
-    zone.addEventListener('touchcancel', endTouch);
-
-    function updateStick(cx, cy) {
-        let dx = cx - origin.x;
-        let dy = cy - origin.y;
-        let dist = Math.sqrt(dx*dx + dy*dy);
-        let maxDist = 40; // Max handle movement
-        let angle = Math.atan2(dy, dx);
-
-        if (dist > maxDist) {
-            dx = Math.cos(angle) * maxDist;
-            dy = Math.sin(angle) * maxDist;
-        }
-
-        handle.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
-
-        let vec = new Vector(dx/maxDist, dy/maxDist);
-        if (type === 'move') inputs.move = vec;
-        if (type === 'aim') {
-            inputs.aim = vec;
-            // Visual feedback for aiming
-            if (dist > 10) handle.style.backgroundColor = 'white';
-        }
-    }
-}
-
-// Keyboard fallback for debugging/PC
-window.addEventListener('keydown', e => {
-    if(e.key==='w') inputs.move.y = -1;
-    if(e.key==='s') inputs.move.y = 1;
-    if(e.key==='a') inputs.move.x = -1;
-    if(e.key==='d') inputs.move.x = 1;
-    if(e.key === ' ') player.shoot(new Vector(1,0)); // Shoot right
-});
-window.addEventListener('keyup', e => {
-    if(['w','s'].includes(e.key)) inputs.move.y = 0;
-    if(['a','d'].includes(e.key)) inputs.move.x = 0;
-});
-
-/**
- * Game Logic
- */
-function initGame() {
+function init() {
     setupJoystick('stick-left', 'move');
     setupJoystick('stick-right', 'aim');
-    
-    // Resize Canvas
-    CANVAS.width = window.innerWidth;
-    CANVAS.height = window.innerHeight;
-
-    // Start Loop
+    resize();
+    floorPattern = createPattern('#2c2b30', '#35343a', CONFIG.tileSize);
     loop();
 }
 
@@ -747,28 +729,25 @@ function selectChar(type, el) {
 }
 
 function startGame() {
+    Audio.resume();
+    Audio.startBGM();
+    
     document.getElementById('main-menu').classList.add('hidden');
     document.getElementById('result-screen').classList.add('hidden');
     document.getElementById('hud').classList.remove('hidden');
 
-    brawlers = [];
-    projectiles = [];
-    gems = [];
-    particles = [];
-    gemSpawnTimer = 0;
+    brawlers = []; projectiles = []; gems = []; particles = [];
     
-    // Create Player (Blue Team)
-    player = new Brawler(200, CONFIG.mapHeight/2, 'blue', playerType);
+    // Player
+    player = new Brawler(200, CONFIG.mapHeight/2, 'blue', playerType, false, "あなた");
     brawlers.push(player);
-
-    // Create Allies (Blue)
-    brawlers.push(new Brawler(200, CONFIG.mapHeight/2 - 200, 'blue', 'sniper', true));
-    brawlers.push(new Brawler(200, CONFIG.mapHeight/2 + 200, 'blue', 'tank', true));
-
-    // Create Enemies (Red)
-    brawlers.push(new Brawler(CONFIG.mapWidth-200, CONFIG.mapHeight/2, 'red', 'fighter', true));
-    brawlers.push(new Brawler(CONFIG.mapWidth-200, CONFIG.mapHeight/2 - 200, 'red', 'sniper', true));
-    brawlers.push(new Brawler(CONFIG.mapWidth-200, CONFIG.mapHeight/2 + 200, 'red', 'tank', true));
+    // Blue Bots
+    brawlers.push(new Brawler(200, CONFIG.mapHeight/2-300, 'blue', 'sniper', true, "味方A"));
+    brawlers.push(new Brawler(200, CONFIG.mapHeight/2+300, 'blue', 'tank', true, "味方B"));
+    // Red Bots
+    brawlers.push(new Brawler(CONFIG.mapWidth-200, CONFIG.mapHeight/2, 'red', 'fighter', true, "敵A"));
+    brawlers.push(new Brawler(CONFIG.mapWidth-200, CONFIG.mapHeight/2-300, 'red', 'sniper', true, "敵B"));
+    brawlers.push(new Brawler(CONFIG.mapWidth-200, CONFIG.mapHeight/2+300, 'red', 'tank', true, "敵C"));
 
     gameActive = true;
 }
@@ -778,176 +757,283 @@ function resetGame() {
     document.getElementById('main-menu').classList.remove('hidden');
 }
 
-function updateScore() {
-    let blueGems = brawlers.filter(b => b.team === 'blue').reduce((a,b) => a + b.gems, 0);
-    let redGems = brawlers.filter(b => b.team === 'red').reduce((a,b) => a + b.gems, 0);
-    document.getElementById('score-blue-val').innerText = blueGems;
-    document.getElementById('score-red-val').innerText = redGems;
-
-    if (blueGems >= 10 || redGems >= 10) {
-        // Simple win condition trigger
-        setTimeout(() => endGame(blueGems > redGems ? 'blue' : 'red'), 2000);
-    }
+function spawnFloatingText(text, x, y, color) {
+    const el = document.createElement('div');
+    el.innerText = text;
+    el.style.position = 'absolute';
+    el.style.left = '50%';
+    el.style.top = '50%';
+    el.style.transform = `translate(-50%, -50%)`;
+    el.style.color = color;
+    el.style.fontFamily = 'var(--header-font)';
+    el.style.fontWeight = 'bold';
+    el.style.fontSize = '1.5rem';
+    el.style.textShadow = '2px 2px 0 #000';
+    el.style.pointerEvents = 'none';
+    el.style.transition = 'all 0.8s ease-out';
+    
+    // Convert World Pos to Screen Pos logic roughly handled by inline style update in loop? 
+    // Simplified: Just use DOM overlay, but we need to track World Pos.
+    // Easier approach: Add to a JS array and draw on Canvas to sync with camera.
+    particles.push({
+        text: text, x: x, y: y, color: color, life: 60, isText: true
+    });
 }
 
 function endGame(winner) {
-    if (!gameActive) return;
     gameActive = false;
     document.getElementById('hud').classList.add('hidden');
+    document.getElementById('respawn-overlay').classList.add('hidden');
+    
     const screen = document.getElementById('result-screen');
     const title = document.getElementById('result-title');
-    const desc = document.getElementById('result-desc');
-    
     screen.classList.remove('hidden');
+
     if (winner === 'blue') {
         title.innerText = "VICTORY!";
-        title.className = "win";
-        desc.innerText = "You controlled the mine!";
+        title.style.color = "#00E676";
     } else {
-        title.innerText = "DEFEAT";
-        title.className = "lose";
-        desc.innerText = "Better luck next time...";
+        title.innerText = "DEFEAT...";
+        title.style.color = "#FF1744";
     }
-}
 
-function spawnFloatingText(text, x, y, color) {
-    const div = document.createElement('div');
-    div.innerText = text;
-    div.className = 'floating-text';
-    div.style.left = (x - camera.x + CANVAS.width/2) + 'px';
-    div.style.top = (y - camera.y + CANVAS.height/2) + 'px';
-    div.style.color = color;
-    document.body.appendChild(div);
-    setTimeout(() => div.remove(), 800);
+    // Populate Stats
+    const tbody = document.getElementById('stats-body');
+    tbody.innerHTML = '';
+    brawlers.sort((a,b) => b.stats.kills - a.stats.kills).forEach(b => {
+        const tr = document.createElement('tr');
+        tr.className = b.team === 'blue' ? 'row-blue' : 'row-red';
+        let name = b.name;
+        if(b === player) name += " <span class='me-indicator'>YOU</span>";
+        
+        tr.innerHTML = `
+            <td style="text-align:left; padding-left:20px;">${name}</td>
+            <td>${b.stats.kills}</td>
+            <td>${b.stats.deaths}</td>
+            <td>${b.stats.gems}</td>
+        `;
+        tbody.appendChild(tr);
+    });
 }
 
 function loop() {
     requestAnimationFrame(loop);
     
-    // Clear
-    CTX.fillStyle = '#2b2b2b';
+    // Background Fill
+    CTX.fillStyle = '#111';
     CTX.fillRect(0,0, CANVAS.width, CANVAS.height);
 
     if (!gameActive) return;
 
     // --- LOGIC ---
-    
-    // Gem Spawner
-    gemSpawnTimer++;
-    if (gemSpawnTimer > CONFIG.gemSpawnRate && gems.length < 15) {
-        gems.push(new Gem(CONFIG.mapWidth/2 + (Math.random()*100-50), CONFIG.mapHeight/2 + (Math.random()*100-50)));
-        gemSpawnTimer = 0;
+    if (Math.random() < 0.02 && gems.length < 20) {
+        gems.push(new Gem(CONFIG.mapWidth/2 + (Math.random()*150-75), CONFIG.mapHeight/2 + (Math.random()*150-75)));
     }
 
-    // Player Input
-    if (inputs.move.mag() > 0.1) {
-        player.velocity = player.velocity.add(inputs.move.mult(0.8)); // Acceleration
-        // Cap speed
-        if (player.velocity.mag() > player.speed) {
-            player.velocity = player.velocity.normalize().mult(player.speed);
-        }
+    // Player Move
+    if (inputs.move.mag() > 0.1 && !player.dead) {
+        player.velocity = player.velocity.add(inputs.move.mult(0.9));
+        if (player.velocity.mag() > player.speed) player.velocity = player.velocity.normalize().mult(player.speed);
     }
 
-    // Update Entities
-    [...gems, ...brawlers, ...projectiles, ...particles].forEach(e => e.update());
+    [...brawlers, ...projectiles, ...gems, ...particles].forEach(e => {
+        if (!e.isText) e.update();
+        else e.life--;
+    });
 
-    // Cleanup Dead
-    projectiles = projectiles.filter(p => !p.dead);
-    gems = gems.filter(g => !g.dead);
-    particles = particles.filter(p => !p.dead);
+    // Score Check
+    let blueScore = brawlers.filter(b=>b.team==='blue').reduce((a,c)=>a+c.currentGemCount,0);
+    let redScore = brawlers.filter(b=>b.team==='red').reduce((a,c)=>a+c.currentGemCount,0);
+    document.getElementById('score-blue-val').innerText = blueScore;
+    document.getElementById('score-red-val').innerText = redScore;
 
-    // Camera Follow
-    let targetCamX = player.pos.x;
-    let targetCamY = player.pos.y;
-    camera.x += (targetCamX - camera.x) * 0.1;
-    camera.y += (targetCamY - camera.y) * 0.1;
+    if (blueScore >= 10 && blueScore > redScore) setTimeout(()=>endGame('blue'), 1000);
+    if (redScore >= 10 && redScore > blueScore) setTimeout(()=>endGame('red'), 1000);
+
+    // Cleanup
+    projectiles = projectiles.filter(p=>!p.dead);
+    gems = gems.filter(g=>!g.dead);
+    particles = particles.filter(p=>!p.dead && p.life > 0);
+
+    // Camera
+    let targetX = player.pos.x;
+    let targetY = player.pos.y;
+    camera.x += (targetX - camera.x) * 0.1;
+    camera.y += (targetY - camera.y) * 0.1;
 
     // --- DRAWING ---
     CTX.save();
-    CTX.translate(-camera.x + CANVAS.width/2, -camera.y + CANVAS.height/2);
+    
+    // Camera Transform (Zoomed Out)
+    CTX.translate(CANVAS.width/2, CANVAS.height/2);
+    CTX.scale(CONFIG.cameraScale, CONFIG.cameraScale);
+    CTX.translate(-camera.x, -camera.y);
 
-    // Draw Grid/Floor
-    CTX.strokeStyle = '#3a3a4d';
-    CTX.lineWidth = 2;
+    // Draw Floor Texture
+    CTX.fillStyle = floorPattern;
+    CTX.fillRect(0, 0, CONFIG.mapWidth, CONFIG.mapHeight);
+    
+    // Map Border
+    CTX.strokeStyle = '#555';
+    CTX.lineWidth = 10;
+    CTX.strokeRect(0,0,CONFIG.mapWidth, CONFIG.mapHeight);
+
+    // Center Mine
     CTX.beginPath();
-    for(let x=0; x<=CONFIG.mapWidth; x+=CONFIG.tileSize) { CTX.moveTo(x,0); CTX.lineTo(x, CONFIG.mapHeight); }
-    for(let y=0; y<=CONFIG.mapHeight; y+=CONFIG.tileSize) { CTX.moveTo(0,y); CTX.lineTo(CONFIG.mapWidth, y); }
+    CTX.arc(CONFIG.mapWidth/2, CONFIG.mapHeight/2, 120, 0, Math.PI*2);
+    CTX.fillStyle = 'rgba(0,0,0,0.3)';
+    CTX.fill();
+    CTX.strokeStyle = '#D500F9';
+    CTX.lineWidth = 4;
+    CTX.setLineDash([10, 10]);
     CTX.stroke();
+    CTX.setLineDash([]);
 
-    // Draw Safe Zone (Center)
-    CTX.strokeStyle = '#29b6f6';
-    CTX.lineWidth = 5;
-    CTX.beginPath();
-    CTX.arc(CONFIG.mapWidth/2, CONFIG.mapHeight/2, 100, 0, Math.PI*2);
-    CTX.stroke();
+    gems.forEach(g => g.draw());
 
-    // Draw Gems
-    gems.forEach(g => g.draw(CTX));
-
-    // Draw Brawlers
     brawlers.forEach(b => {
         if (b.dead) return;
-
+        
         // Shadow
-        CTX.fillStyle = 'rgba(0,0,0,0.5)';
+        CTX.fillStyle = 'rgba(0,0,0,0.4)';
         CTX.beginPath();
-        CTX.ellipse(b.pos.x, b.pos.y + 15, 20, 10, 0, 0, Math.PI*2);
+        CTX.ellipse(b.pos.x, b.pos.y+10, b.radius*0.8, b.radius*0.4, 0, 0, Math.PI*2);
         CTX.fill();
 
-        // Body
+        // Unit
         CTX.fillStyle = b.color;
         CTX.beginPath();
         CTX.arc(b.pos.x, b.pos.y, b.radius, 0, Math.PI*2);
         CTX.fill();
-        CTX.lineWidth = 4;
-        CTX.strokeStyle = '#000';
+        
+        // Texture overlay on unit
+        CTX.fillStyle = 'rgba(255,255,255,0.1)';
+        CTX.beginPath();
+        CTX.arc(b.pos.x-10, b.pos.y-10, b.radius/2, 0, Math.PI*2);
+        CTX.fill();
+
+        // Stroke
+        CTX.strokeStyle = '#fff';
+        CTX.lineWidth = 3;
         CTX.stroke();
 
-        // Aim indicator (if player)
+        // Aim Guide
         if (b === player && inputs.aim.mag() > 0.1) {
             CTX.save();
             CTX.translate(b.pos.x, b.pos.y);
             CTX.rotate(Math.atan2(inputs.aim.y, inputs.aim.x));
-            CTX.fillStyle = 'rgba(255, 255, 255, 0.3)';
-            CTX.fillRect(0, -5, b.range, 10);
+            CTX.fillStyle = 'rgba(255,255,255,0.2)';
+            CTX.beginPath();
+            if (b.type==='fighter') {
+                CTX.moveTo(0,0); CTX.lineTo(b.range, -60); CTX.lineTo(b.range, 60);
+            } else {
+                CTX.fillRect(0, -10, b.range, 20);
+            }
+            CTX.fill();
             CTX.restore();
         }
 
         // HP Bar
-        const hpPct = b.hp / b.maxHp;
-        CTX.fillStyle = '#333';
-        CTX.fillRect(b.pos.x - 25, b.pos.y - 50, 50, 8);
-        CTX.fillStyle = '#00E676';
-        CTX.fillRect(b.pos.x - 25, b.pos.y - 50, 50 * hpPct, 8);
+        const pct = b.hp / b.maxHp;
+        CTX.fillStyle = '#222';
+        CTX.fillRect(b.pos.x - 30, b.pos.y - 60, 60, 10);
+        CTX.fillStyle = pct > 0.5 ? '#00E676' : '#FF1744';
+        CTX.fillRect(b.pos.x - 30, b.pos.y - 60, 60*pct, 10);
+        
+        // Name
+        CTX.fillStyle = '#fff';
+        CTX.font = "bold 20px 'Noto Sans JP'";
+        CTX.textAlign = 'center';
+        CTX.fillText(b.name, b.pos.x, b.pos.y - 70);
 
-        // Gem Count
-        if (b.gems > 0) {
-            CTX.font = "bold 16px Rubik";
-            CTX.fillStyle = "#fff";
-            CTX.textAlign = "center";
-            CTX.fillText("💎" + b.gems, b.pos.x, b.pos.y - 60);
+        if (b.currentGemCount > 0) {
+            CTX.font = "24px sans-serif";
+            CTX.fillText("💎"+b.currentGemCount, b.pos.x, b.pos.y - 90);
         }
     });
 
-    // Draw Projectiles
     projectiles.forEach(p => {
-        CTX.fillStyle = p.team === 'blue' ? '#80d8ff' : '#ff8a80';
+        CTX.fillStyle = p.team === 'blue' ? '#80D8FF' : '#FF8A80';
         CTX.beginPath();
         CTX.arc(p.pos.x, p.pos.y, p.radius, 0, Math.PI*2);
         CTX.fill();
     });
 
-    // Draw Particles
-    particles.forEach(p => p.draw(CTX));
+    // Particles / Floating Text
+    particles.forEach(p => {
+        if (p.isText) {
+            CTX.font = "bold 32px 'Mochiy Pop P One'";
+            CTX.fillStyle = p.color;
+            CTX.strokeStyle = 'black';
+            CTX.lineWidth = 4;
+            CTX.strokeText(p.text, p.x, p.y - (60-p.life));
+            CTX.fillText(p.text, p.x, p.y - (60-p.life));
+        } else {
+            CTX.fillStyle = p.color;
+            CTX.globalAlpha = p.life/p.maxLife;
+            CTX.beginPath();
+            CTX.arc(p.pos.x, p.pos.y, p.radius * (p.life/p.maxLife), 0, Math.PI*2);
+            CTX.fill();
+            CTX.globalAlpha = 1;
+        }
+    });
 
     CTX.restore();
 }
 
-window.onload = initGame;
-window.onresize = () => {
+function resize() {
     CANVAS.width = window.innerWidth;
     CANVAS.height = window.innerHeight;
-};
+}
+
+// Input Helpers
+function setupJoystick(id, type) {
+    const zone = document.getElementById(id);
+    const handle = zone.querySelector('.joystick-handle');
+    let touchId = null, origin = {x:0, y:0};
+
+    const handleStart = (e) => {
+        e.preventDefault();
+        const t = e.changedTouches ? e.changedTouches[0] : e;
+        if(e.changedTouches) touchId = t.identifier;
+        const r = zone.getBoundingClientRect();
+        origin = {x: r.left+r.width/2, y: r.top+r.height/2};
+        update(t.clientX, t.clientY);
+    };
+    const handleMove = (e) => {
+        e.preventDefault();
+        const t = e.changedTouches ? [...e.changedTouches].find(touch=>touch.identifier===touchId) : e;
+        if(t) update(t.clientX, t.clientY);
+    };
+    const handleEnd = (e) => {
+        e.preventDefault();
+        touchId = null;
+        handle.style.transform = `translate(-50%, -50%)`;
+        if (type==='move') inputs.move = new Vector(0,0);
+        else {
+            if(inputs.aim.mag() > 0.2) player.shoot(inputs.aim);
+            inputs.aim = new Vector(0,0);
+        }
+    };
+    function update(cx, cy) {
+        let dx = cx - origin.x, dy = cy - origin.y;
+        let dist = Math.sqrt(dx*dx+dy*dy), angle = Math.atan2(dy,dx);
+        let max = 50;
+        if(dist>max) { dx = Math.cos(angle)*max; dy=Math.sin(angle)*max; }
+        handle.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+        let v = new Vector(dx/max, dy/max);
+        if(type==='move') inputs.move = v; else inputs.aim = v;
+    }
+    zone.addEventListener('touchstart', handleStart, {passive:false});
+    zone.addEventListener('touchmove', handleMove, {passive:false});
+    zone.addEventListener('touchend', handleEnd, {passive:false});
+    zone.addEventListener('mousedown', handleStart);
+    window.addEventListener('mousemove', e => { if(touchId!==null && !e.changedTouches) handleMove(e); });
+    window.addEventListener('mouseup', e => { if(touchId!==null && !e.changedTouches) handleEnd(e); });
+}
+
+window.addEventListener('resize', resize);
+window.onload = init;
 
 </script>
 </body>
